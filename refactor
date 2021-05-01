@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# refactors name based on git grep "needle" in all .h|.cpp files
+# TODO pass in file types to check instead of hardcoded cpp files
+# See `man rename` for inspiration
+
+if [ "$#" -ne 2 ]; then
+  printf "Usage: refactor oldString newString\n"
+  exit 1
+fi
+
+for files in `git grep $1 {**/*.cpp,**/*.h} | awk ' BEGIN {FS=":"} {print $1 }'`
+do 
+#  printf "\033[1;33mmatch: \033[0m%s\n" $files
+  sed -i.bak "s/$1/$2/g " $files
+done
+

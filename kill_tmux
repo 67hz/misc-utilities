@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# remove tmux #d sessions in the range {$1..$2}
+# usage example: remove sessions 1 through 10
+# kill_tmux 1 10
+
+MIN=$1
+MAX=$2
+
+if [ "$#" -ne 2 ]; then
+  printf "Usage: $(basename $0) min_session# max_session#\n"
+  exit 1
+fi
+
+for ((i = $1; i <= $2; ++i))
+do
+  printf "removing: %s\n" "$i"
+  eval "tmux kill-session -t $i"
+done

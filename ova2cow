@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# convert ova vm to qcow image
+
+IMAGE=$1
+
+if [ "$#" -ne 2 ]; then
+  printf "Usage: $(basename "$0") vdkFile ovaFile\n"
+  exit 1
+fi
+
+eval "qemu-img convert $IMAGE $(basename "$IMAGE").qcow2 -O qcow2"
