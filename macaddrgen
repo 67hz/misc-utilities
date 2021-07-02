@@ -20,7 +20,7 @@ def randomMAC():
 
 process = subprocess.Popen(["uuidgen", "-r"], stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate()[0]
 
-print ("New UUID: ", process)
+print ("New UUID: ", process.decode('utf8'))
 print ("New MAC: ", randomMAC())
 
 
