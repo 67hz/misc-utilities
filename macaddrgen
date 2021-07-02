@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+# generate a UUID and MAC address for guest domains
+import os
+import sys
+import argparse
+import subprocess
+import random
+
+PIPE = subprocess.PIPE
+
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/virtualization/sect-virtualization-tips_and_tricks-generating_a_new_unique_mac_address
+def randomMAC():
+    mac = [0x00, 0x16, 0x3e,
+            random.randint(0x00, 0x7f),
+            random.randint(0x00, 0xff),
+            random.randint(0x00, 0xff) ]
+    return ':'.join(map(lambda x: "%02x" %x, mac))
+
+
+process = subprocess.Popen(["uuidgen", "-r"], stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate()[0]
+
+print ("New UUID: ", process)
+print ("New MAC: ", randomMAC())
+
+
+

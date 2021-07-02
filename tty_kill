@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+# Kill pid via associated tty
+# usage: tty_kill ttyUSB0
+
+DEV=$1
+
+ps -ef | grep $DEV | awk '{if ($9 ~ /'${DEV}'/) system("kill -9 "$2"")}'
+
+
+
+

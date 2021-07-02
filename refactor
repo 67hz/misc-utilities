@@ -10,7 +10,7 @@ if [ "$#" -ne 2 ]; then
 fi
 
 for files in `git grep $1 {**/*.cpp,**/*.h} | awk ' BEGIN {FS=":"} {print $1 }'`
-do 
+do
 #  printf "\033[1;33mmatch: \033[0m%s\n" $files
   sed -i.bak "s/$1/$2/g " $files
 done

@@ -2,7 +2,7 @@
 
 # Lookup undefined symbols in an object file using `nm`
 # usage: ldsearch /path/to/objectfile
-# TODO improve display versus 
+# TODO improve display versus
 #    nm -C -u file
 
 OBJECT=$1
@@ -12,7 +12,7 @@ if ! [ -f "$OBJECT" ]; then
   exit 1
 fi
 
-# search for all Undefined 
+# search for all Undefined
 nm -C $OBJECT | grep vtable | awk 'BEGIN {FS=" "} { if ($1 ~ /U/) print } '
 
 
