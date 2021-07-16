@@ -1,17 +1,75 @@
 #!/bin/bash
 
+# -i old string
+# -o new string
+# -n noaction
+# -r replace
+# -p search pattern - must surround with quotes, e.g., "*.h"
+# -g use git grep
+# -v verbose
 # refactors name based on git grep "needle" in all .h|.cpp files
-# TODO pass in file types to check instead of hardcoded cpp files
+#
+# 	rename -nv oldstr newstr $(find ./some/path  -name *oldstr*)
 # See `man rename` for inspiration
 
-if [ "$#" -ne 2 ]; then
+
+srch=grep
+
+echo
+while getopts :gvnri:o:p: opt
+do
+	case "$opt" in
+		i) if=$OPTARG ;;
+		o) of=$OPTARG ;;
+		v) verbose="v" ;;
+		p) pattern=$OPTARG;;
+		r) replace=1 ;;
+		n) noaction="-n" ;;
+		g) srch="git grep" ;;
+		*) echo "Unknown option: $opt" ;;
+	esac
+done
+
+if [ "$#" -lt 2 ]; then
   printf "Usage: refactor oldString newString\n"
   exit 1
 fi
 
-for files in `git grep $1 {**/*.cpp,**/*.h} | awk ' BEGIN {FS=":"} {print $1 }'`
-do
-#  printf "\033[1;33mmatch: \033[0m%s\n" $files
-  sed -i.bak "s/$1/$2/g " $files
-done
+# set search pattern if not specified with `-p "somepattern"`
+if [ -n "$pattern" ]; then
+	for files in $pattern; do
+		printf "scanning: %s\n" $files
+	done
+else
+	pattern="**/*.cpp,**/*.h,Makefile,CMake*"
+fi
 
+# verbose displae)
+if [ -n "$verbose" ]; then
+	printf "if: %s of: %s\n" $if $of
+fi
+
+# replace all occurences of $if with $of
+replaceTextInFiles() {
+	for file in $($srch -l $if $pattern); do
+		if [ -n "$replace" ]; then
+			printf "\033[1;33mreplace match: \033[0m%s\n" $file
+
+			sed -i "s/$if/$of/g" $file
+			cat $file
+		else
+			printf "found match: %s\n" `$srch -l $if $pattern`
+		fi
+	done
+}
+
+renameFiles() {
+	rename ${noaction:-} -v $if $of $(find . -name "*$if*")
+}
+
+doRun() {
+	replaceTextInFiles
+	renameFiles
+}
+
+doRun
